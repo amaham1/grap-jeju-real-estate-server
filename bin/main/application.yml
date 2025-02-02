@@ -1,0 +1,82 @@
+spring:
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=500,expireAfterWrite=600s
+  config:
+    activate:
+      on-profile:
+        - default
+  datasource:
+    hikari:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      jdbc-url: jdbc:mysql://localhost:3306/all-jeju
+      username: root
+      password: Qnflck2##$
+      pool-name: Hikari Connection Pool
+      minimum-idle: 2
+      maximum-pool-size: 8
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MariaDBDialect    
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+  jackson:
+    time-zone: Asia/Seoul
+mybatis:
+  type-aliases-package: org.alljeju.alljejuserver.model
+  configuration:
+    default-statement-timeout : 30
+    auto-mapping-unknown-column-behavior : warning
+    map-underscore-to-camel-case : true
+  mapper-locations: classpath:/sql/DML/*.xml
+server:
+  error:
+    include-exception: true
+    include-stacktrace: always
+    include-message: always
+  servlet:
+    session:
+      timeout: 60m
+  tomcat:
+    uri-encoding: UTF-8    
+  port: 28080
+upload:
+  file:
+    path: "c:/logs/upload/file/2024/alljejuServer/"
+    max-size: 104857600
+cookie-set:
+  domain: "localhost"
+  prefix: "kr.co.Jur."
+  tracking: true
+  tracking-age: 15638400
+logging:
+  level:
+    org:
+      alljeju:
+        alljejuserver:
+          mapper: DEBUG
+    org.alljeju.alljejuserver: DEBUG
+    org.mybatis: TRACE
+    root: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/application.log
+    max-size: 10MB
+    max-history: 30
+debug: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: caches
+  endpoint:
+    caches:
+      enabled: true

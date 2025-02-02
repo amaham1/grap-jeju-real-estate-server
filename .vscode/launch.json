@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-AllJejuServerApplication<allJejuServer>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "org.alljeju.alljejuserver.AllJejuServerApplication",
+            "projectName": "allJejuServer",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

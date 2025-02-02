@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.alljeju.alljejuserver.mapper.RealEstateMapper">
+
+    <insert id="insertRealEstate" parameterType="org.alljeju.alljejuserver.model.RealEstate">
+        INSERT INTO jeju_aprt_real_state (
+            sgg_cd, umd_cd, land_cd, bonbun, bubun,
+            road_nm, road_nm_sgg_cd, road_nm_cd, road_nm_seq, road_nmb_cd,
+            road_nm_bonbun, road_nm_bubun, umd_nm, apt_nm, jibun,
+            exclu_use_ar, deal_year, deal_month, deal_day, deal_amount,
+            floor, build_year, apt_seq, cdeal_type, cdeal_day,
+            dealing_gbn, estate_agent_sgg_nm, rgs_tdate, apt_dong,
+            sler_gbn, buyer_gbn, land_leasehold_gbn, create_date,
+            use_yn, delete_yn
+        ) VALUES (
+            #{sggCd}, #{umdCd}, #{landCd}, #{bonbun}, #{bubun},
+            #{roadNm}, #{roadNmSggCd}, #{roadNmCd}, #{roadNmSeq}, #{roadNmbCd},
+            #{roadNmBonbun}, #{roadNmBubun}, #{umdNm}, #{aptNm}, #{jibun},
+            #{excluUseAr}, #{dealYear}, #{dealMonth}, #{dealDay}, #{dealAmount},
+            #{floor}, #{buildYear}, #{aptSeq}, #{cdealType}, #{cdealDay},
+            #{dealingGbn}, #{estateAgentSggNm}, #{rgsTdate}, #{aptDong},
+            #{slerGbn}, #{buyerGbn}, #{landLeaseholdGbn}, NOW(),
+            'Y', 'N'
+        )
+    </insert>
+
+    <select id="selectAllRealEstates" parameterType="map" resultType="org.alljeju.alljejuserver.model.RealEstate">
+        SELECT * FROM jeju_aprt_real_state 
+        WHERE delete_yn = 'N' 
+        AND ((deal_year > #{startDealYear})
+             OR (deal_year = #{startDealYear} AND deal_month >= #{startDealMonth}))
+        AND ((deal_year &lt; #{endDealYear})
+             OR (deal_year = #{endDealYear} AND deal_month &lt;= #{endDealMonth}))
+        <if test="searchWord != null and searchWord != ''">
+            AND (apt_nm LIKE CONCAT('%', #{searchWord}, '%'))
+        </if>
+        <if test="searchType != null and searchKey != null">
+            AND ${searchType} LIKE CONCAT('%', #{searchKey}, '%')
+        </if>
+        <if test="aptSeq != null">
+            AND apt_seq = #{aptSeq}
+        </if>
+         <if test="floor != null">
+            AND floor = #{floor}
+        </if>
+        <if test="umdNm != null">
+            AND umd_nm = #{umdNm}
+        </if>
+        <choose>
+            <when test="sortType != null and sortOrder != null and sortType != '' and sortOrder != ''">
+                ORDER BY ${sortType} ${sortOrder}
+            </when>
+            <otherwise>
+                ORDER BY deal_year DESC, deal_month DESC, deal_day DESC
+            </otherwise>
+        </choose>
+        <if test="itemNum != null and itemSizePerPage != null">
+            LIMIT #{itemNum}, #{itemSizePerPage}
+        </if>
+    </select>
+
+    <select id="selectAllRealEstatesCount" parameterType="map" resultType="int">
+        SELECT COUNT(*) FROM jeju_aprt_real_state 
+        WHERE delete_yn = 'N' 
+        AND ((deal_year > #{startDealYear})
+             OR (deal_year = #{startDealYear} AND deal_month >= #{startDealMonth}))
+        AND ((deal_year &lt; #{endDealYear})
+             OR (deal_year = #{endDealYear} AND deal_month &lt;= #{endDealMonth}))
+        <if test="searchWord != null and searchWord != ''">
+            AND (apt_nm LIKE CONCAT('%', #{searchWord}, '%'))
+        </if>
+        <if test="searchType != null and searchKey != null">
+            AND ${searchType} LIKE CONCAT('%', #{searchKey}, '%')
+        </if>
+        <if test="aptSeq != null">
+            AND apt_seq = #{aptSeq}
+        </if>
+         <if test="floor != null">
+            AND floor = #{floor}
+        </if>
+        <if test="umdNm != null">
+            AND umd_nm = #{umdNm}
+        </if>
+        <choose>
+            <when test="sortType != null and sortOrder != null and sortType != '' and sortOrder != ''">
+                ORDER BY ${sortType} ${sortOrder}
+            </when>
+            <otherwise>
+                ORDER BY deal_year DESC, deal_month DESC, deal_day DESC
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="selectRealEstateAptSeq" resultType="org.alljeju.alljejuserver.model.RealEstate">
+        SELECT * FROM jeju_aprt_real_state WHERE apt_seq = #{aptSeq} AND delete_yn = 'N'
+    </select>
+
+    <select id="findByChecksum" resultType="org.alljeju.alljejuserver.model.RealEstate">
+        SELECT * FROM jeju_aprt_real_state WHERE checksum = #{checksum}
+    </select>
+
+    <select id="selectRealEstateById" parameterType="map" resultType="org.alljeju.alljejuserver.model.RealEstate">
+        SELECT *
+        FROM jeju_aprt_real_state
+        <where>
+            <if test="jsApRSId != null"> AND js_ap_r_s_id = #{jsApRSId} </if>
+            <if test="aptSeq != null"> AND apt_seq = #{aptSeq} </if>
+            <if test="floor != null"> AND floor = #{floor} </if>
+        </where>
+        AND use_yn = 'Y'
+        AND delete_yn = 'N'
+    </select>
+
+    <select id="selectTopMonthlyTransactions" parameterType="string" resultType="org.alljeju.alljejuserver.model.RealEstate">
+        SELECT *
+        FROM jeju_aprt_real_state
+        WHERE 
+            deal_year = CAST(SUBSTRING_INDEX(#{dealDate}, '-', 1) AS UNSIGNED)
+            AND deal_month = CAST(SUBSTRING_INDEX(#{dealDate}, '-', -1) AS UNSIGNED)
+        ORDER BY deal_amount DESC
+        LIMIT 5
+    </select>
+
+    <insert id="insertOrUpdate">
+        INSERT INTO jeju_aprt_real_state (
+             sgg_cd, umd_cd, land_cd, bonbun, bubun,
+            road_nm, road_nm_sgg_cd, road_nm_cd, road_nm_seq, road_nmb_cd,
+            road_nm_bonbun, road_nm_bubun, umd_nm, apt_nm, jibun,
+            exclu_use_ar, deal_year, deal_month, deal_day, deal_amount,
+            floor, build_year, apt_seq, cdeal_type, cdeal_day,
+            dealing_gbn, estate_agent_sgg_nm, rgs_tdate, apt_dong,
+            sler_gbn, buyer_gbn, land_leasehold_gbn, longitude, latitude, create_date,
+            use_yn, delete_yn, checksum
+        ) VALUES (
+             #{sggCd}, #{umdCd}, #{landCd}, #{bonbun}, #{bubun},
+            #{roadNm}, #{roadNmSggCd}, #{roadNmCd}, #{roadNmSeq}, #{roadNmbCd},
+            #{roadNmBonbun}, #{roadNmBubun}, #{umdNm}, #{aptNm}, #{jibun},
+            #{excluUseAr}, #{dealYear}, #{dealMonth}, #{dealDay}, #{dealAmount},
+            #{floor}, #{buildYear}, #{aptSeq}, #{cdealType}, #{cdealDay},
+            #{dealingGbn}, #{estateAgentSggNm}, #{rgsTdate}, #{aptDong},
+            #{slerGbn}, #{buyerGbn}, #{landLeaseholdGbn}, #{longitude}, #{latitude}, NOW(),
+            'Y', 'N', #{checksum}
+        ) ON DUPLICATE KEY UPDATE
+            apt_dong = VALUES(apt_dong),
+            apt_nm = VALUES(apt_nm),
+            bonbun = VALUES(bonbun),
+            bubun = VALUES(bubun),
+            build_year = VALUES(build_year),
+            buyer_gbn = VALUES(buyer_gbn),
+            deal_amount = VALUES(deal_amount),
+            deal_year = VALUES(deal_year),
+            deal_month = VALUES(deal_month),
+            deal_day = VALUES(deal_day),
+            exclu_use_ar = VALUES(exclu_use_ar),
+            floor = VALUES(floor),
+            jibun = VALUES(jibun),
+            land_cd = VALUES(land_cd),
+            land_leasehold_gbn = VALUES(land_leasehold_gbn),
+            road_nm = VALUES(road_nm),
+            road_nm_bonbun = VALUES(road_nm_bonbun),
+            road_nm_bubun = VALUES(road_nm_bubun),
+            road_nm_cd = VALUES(road_nm_cd),
+            road_nm_seq = VALUES(road_nm_seq),
+            road_nm_sgg_cd = VALUES(road_nm_sgg_cd),
+            road_nmb_cd = VALUES(road_nmb_cd),
+            sgg_cd = VALUES(sgg_cd),
+            sler_gbn = VALUES(sler_gbn),
+            umd_cd = VALUES(umd_cd),
+            umd_nm = VALUES(umd_nm),
+            longitude = VALUES(longitude),
+            latitude = VALUES(latitude),
+            checksum = VALUES(checksum),
+            last_update_date = NOW()
+    </insert>
+</mapper>
+<!-- End Generation Here -->
