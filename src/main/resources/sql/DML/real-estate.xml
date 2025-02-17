@@ -29,10 +29,28 @@
     <select id="selectAllRealEstates" parameterType="map" resultType="org.alljeju.alljejuserver.model.RealEstate">
         SELECT * FROM jeju_aprt_real_state 
         WHERE delete_yn = 'N' 
-        AND ((deal_year > #{startDealYear})
-             OR (deal_year = #{startDealYear} AND deal_month >= #{startDealMonth}))
-        AND ((deal_year &lt; #{endDealYear})
-             OR (deal_year = #{endDealYear} AND deal_month &lt;= #{endDealMonth}))
+        <if test="startDealYear != null">
+            <choose>
+                <when test="startDealMonth != null">
+                    AND ((deal_year > #{startDealYear})
+                         OR (deal_year = #{startDealYear} AND deal_month >= #{startDealMonth}))
+                </when>
+                <otherwise>
+                    AND deal_year >= #{startDealYear}
+                </otherwise>
+            </choose>
+        </if>
+        <if test="endDealYear != null">
+            <choose>
+                <when test="endDealMonth != null">
+                    AND ((deal_year &lt; #{endDealYear})
+                         OR (deal_year = #{endDealYear} AND deal_month &lt;= #{endDealMonth}))
+                </when>
+                <otherwise>
+                    AND deal_year &lt;= #{endDealYear}
+                </otherwise>
+            </choose>
+        </if>
         <if test="searchWord != null and searchWord != ''">
             AND (apt_nm LIKE CONCAT('%', #{searchWord}, '%'))
         </if>
@@ -64,10 +82,28 @@
     <select id="selectAllRealEstatesCount" parameterType="map" resultType="int">
         SELECT COUNT(*) FROM jeju_aprt_real_state 
         WHERE delete_yn = 'N' 
-        AND ((deal_year > #{startDealYear})
-             OR (deal_year = #{startDealYear} AND deal_month >= #{startDealMonth}))
-        AND ((deal_year &lt; #{endDealYear})
-             OR (deal_year = #{endDealYear} AND deal_month &lt;= #{endDealMonth}))
+        <if test="startDealYear != null">
+            <choose>
+                <when test="startDealMonth != null">
+                    AND ((deal_year > #{startDealYear})
+                         OR (deal_year = #{startDealYear} AND deal_month >= #{startDealMonth}))
+                </when>
+                <otherwise>
+                    AND deal_year >= #{startDealYear}
+                </otherwise>
+            </choose>
+        </if>
+        <if test="endDealYear != null">
+            <choose>
+                <when test="endDealMonth != null">
+                    AND ((deal_year &lt; #{endDealYear})
+                         OR (deal_year = #{endDealYear} AND deal_month &lt;= #{endDealMonth}))
+                </when>
+                <otherwise>
+                    AND deal_year &lt;= #{endDealYear}
+                </otherwise>
+            </choose>
+        </if>
         <if test="searchWord != null and searchWord != ''">
             AND (apt_nm LIKE CONCAT('%', #{searchWord}, '%'))
         </if>

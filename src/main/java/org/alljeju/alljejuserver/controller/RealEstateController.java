@@ -11,6 +11,7 @@ import org.alljeju.alljejuserver.model.RealEstateResponse;
 import org.alljeju.alljejuserver.service.RealEstateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -93,8 +94,10 @@ public class RealEstateController {
         @RequestParam(value = "aptSeq", required = false) String aptSeq,
         @RequestParam(value = "floor", required = false) String floor,
         @RequestParam(value = "searchWord", required = false) String searchWord,
-        @RequestParam(required = false) String startDate,
-        @RequestParam(required = false) String endDate,
+        @RequestParam(required = false) String startDealYear,
+        @RequestParam(required = false) String startDealMonth,
+        @RequestParam(required = false) String endDealYear,
+        @RequestParam(required = false) String endDealMonth,
         @RequestParam(defaultValue = "0") Integer itemNum,
         @RequestParam(defaultValue = "10") Integer itemSizePerPage,
         @RequestParam(required = false) String searchKey,
@@ -108,8 +111,8 @@ public class RealEstateController {
         logger.info("aptSeq: {}", aptSeq);
         logger.info("floor: {}", floor);
         logger.info("searchWord: {}", searchWord);
-        logger.info("Start Date: {}", startDate);
-        logger.info("End Date: {}", endDate);
+        logger.info("Start Date: {}-{}", startDealYear, startDealMonth);
+        logger.info("End Date: {}-{}", endDealYear, endDealMonth);
         logger.info("Item Number: {}", itemNum);
         logger.info("Items Per Page: {}", itemSizePerPage);
         logger.info("Search Key: {}", searchKey);
@@ -123,26 +126,26 @@ public class RealEstateController {
         floor = (floor != null && floor.trim().isEmpty()) ? null : floor;
 
         // 시작 날짜 기본값 설정 (현재 달의 첫날)
-        Integer startDealYear = java.time.Year.now().getValue();
-        Integer startDealMonth = java.time.LocalDate.now().getMonthValue();
+        // Integer startDealYear = null;
+        // Integer startDealMonth = null;
 
         // 종료 날짜 기본값 설정 (현재 날짜)
-        Integer endDealYear = java.time.Year.now().getValue();
-        Integer endDealMonth = java.time.LocalDate.now().getMonthValue();
+        // Integer endDealYear = null;
+        // Integer endDealMonth = null;
 
         // startDate 파라미터가 있으면 파싱
-        if (startDate != null && !startDate.isEmpty()) {
-            String[] startParts = startDate.split("-");
-            startDealYear = Integer.parseInt(startParts[0]);
-            startDealMonth = Integer.parseInt(startParts[1]);
-        }
+        // if (startDate != null && !startDate.isEmpty()) {
+        //     String[] startParts = startDate.split("-");
+        //     startDealYear = Integer.parseInt(startParts[0]);
+        //     startDealMonth = Integer.parseInt(startParts[1]);
+        // }
 
-        // endDate 파라미터가 있으면 파싱
-        if (endDate != null && !endDate.isEmpty()) {
-            String[] endParts = endDate.split("-");
-            endDealYear = Integer.parseInt(endParts[0]);
-            endDealMonth = Integer.parseInt(endParts[1]);
-        }
+        // // endDate 파라미터가 있으면 파싱
+        // if (endDate != null && !endDate.isEmpty()) {
+        //     String[] endParts = endDate.split("-");
+        //     endDealYear = Integer.parseInt(endParts[0]);
+        //     endDealMonth = Integer.parseInt(endParts[1]);
+        // }
 
         // HashMap에 담기
         Map<String, Object> params = new HashMap<>();
@@ -151,8 +154,10 @@ public class RealEstateController {
         params.put("aptSeq", aptSeq);
         params.put("floor", floor);
         params.put("searchWord", searchWord);
-        params.put("startDate", startDate);
-        params.put("endDate", endDate);
+        params.put("startDate", startDealYear);
+        params.put("startMonth", startDealMonth);
+        params.put("endDate", endDealYear);
+        params.put("endMonth", endDealMonth);
         params.put("itemNum", itemNum);
         params.put("itemSizePerPage", itemSizePerPage);
         params.put("searchKey", searchKey);

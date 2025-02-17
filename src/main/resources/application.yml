@@ -13,6 +13,9 @@ spring:
       jdbc-url: jdbc:mysql://localhost:3306/all-jeju
       username: root
       password: Qnflck2##$
+      # jdbc-url: jdbc:mysql://localhost:3306/akapwhdgrap
+      # username: akapwhdgrap
+      # password: qnflck3@@
       pool-name: Hikari Connection Pool
       minimum-idle: 2
       maximum-pool-size: 8
@@ -31,9 +34,10 @@ spring:
 mybatis:
   type-aliases-package: org.alljeju.alljejuserver.model
   configuration:
-    default-statement-timeout : 30
-    auto-mapping-unknown-column-behavior : warning
-    map-underscore-to-camel-case : true
+    default-statement-timeout: 30
+    auto-mapping-unknown-column-behavior: warning
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   mapper-locations: classpath:/sql/DML/*.xml
 server:
   error:
@@ -45,7 +49,7 @@ server:
       timeout: 60m
   tomcat:
     uri-encoding: UTF-8    
-  port: 28080
+  port: 8080
 upload:
   file:
     path: "c:/logs/upload/file/2024/alljejuServer/"
@@ -62,6 +66,7 @@ logging:
         alljejuserver:
           mapper: DEBUG
     org.alljeju.alljejuserver: DEBUG
+    org.alljeju.alljejuserver.mapper: TRACE
     org.mybatis: TRACE
     root: INFO
   pattern:

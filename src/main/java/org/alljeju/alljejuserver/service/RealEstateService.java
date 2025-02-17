@@ -60,8 +60,8 @@ public class RealEstateService {
         int startMonth = java.time.LocalDate.now().getMonthValue()-1;
         int endYear = java.time.Year.now().getValue();
         int endMonth = java.time.LocalDate.now().getMonthValue();
-        for (int year = 2024; year <= endYear; year++) {
-            for (int month = 0; month <= 11; month++) {
+        for (int year = startYear; year <= endYear; year++) {
+            for (int month = 0; month <= endMonth; month++) {
                 if (year == endYear && month > endMonth) {
                     break;
                 }
@@ -158,8 +158,6 @@ public class RealEstateService {
     // @Cacheable(value = "realEstateData", key = "'realEstateData-' + #params['startDealYear'] + '-' + #params['startDealMonth'] + '-' + #params['endDealYear'] + '-' + #params['endDealMonth'] + '-' + #params['itemNum'] + '-' + #params['itemSizePerPage'] + '-' + #params['searchKey'] + '-' + #params['searchType'] + '-' + #params['sortType'] + '-' + #params['sortOrder']")
     public RealEstateResponse getAllRealEstates(Map<String, Object> params) {
         logger.info("=== Service Layer: getAllRealEstates ===");
-        logger.info("Cache disabled - executing query directly");
-        logger.info("Query Parameters:");
         logger.info("Start Year-Month: {}-{}", params.get("startDealYear"), params.get("startDealMonth"));
         logger.info("End Year-Month: {}-{}", params.get("endDealYear"), params.get("endDealMonth"));
         logger.info("Pagination: {} items from index {}", params.get("itemSizePerPage"), params.get("itemNum"));
