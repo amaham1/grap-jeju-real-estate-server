@@ -128,6 +128,7 @@ public class SecurityConfig {
 						.csrfTokenRepository(httpSessionCsrfTokenRepository())
 						.ignoringRequestMatchers("/nicepay/**")
 						.ignoringRequestMatchers("/crm/**")
+						.ignoringRequestMatchers("/api/bus/**")
 			)
 			.sessionManagement(
 				(session) ->
